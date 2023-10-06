@@ -1,0 +1,20 @@
+{
+  "name": "@zoid-fs/fuse-client",
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "lint": "npx tsc --noEmit"
+  },
+  "private": true,
+  "devDependencies": {
+    "@nx/js": "16.8.1",
+    "nx": "16.8.1",
+    "nx-cloud": "latest",
+    "vite-node": "0.34.5"
+  },
+  "dependencies": {
+    "node-fuse-bindings": "2.12.4",
+    "ts-pattern": "5.0.5"
+  }
+}

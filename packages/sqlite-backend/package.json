@@ -1,0 +1,20 @@
+{
+  "name": "@zoid-fs/sqlite-backend",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "lint": "npx tsc --noEmit"
+  },
+  "private": true,
+  "devDependencies": {
+    "@nx/js": "16.8.1",
+    "nx": "16.8.1",
+    "nx-cloud": "latest",
+    "vite-node": "0.34.5"
+  },
+  "dependencies": {
+    "@prisma/client": "5.3.1",
+    "prisma": "5.3.1"
+  }
+}

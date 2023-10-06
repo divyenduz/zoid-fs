@@ -1,0 +1,25 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./fs.db"
+}
+
+model File {
+  id        Int      @id @default(autoincrement())
+  type      String // dir or file
+  parentDir Int      @default(0) // Note: 0 means root
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String   @unique // Note: beacuse of directories, name is not unique anymore but we need to make a compound index with keys (name, parentDir)
+  path      String
+  // fileType  String // text or binary
+  content   Bytes // also support binary
+  // binary    Bytes // also support binary
+  isLocked  Boolean  @default(false)
+}

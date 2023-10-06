@@ -1,0 +1,20 @@
+{
+  "name": "zoid-fs",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "nx run-many --parallel 1 --output-style=stream --target=start --projects @zoid-fs/zoid-fs-client",
+    "test": "nx run-many --parallel 1 --output-style=stream --target=test --projects @zoid-fs/zoid-fs-client",
+    "lint": "nx run-many --parallel 4 --output-style=stream --target=lint --projects @zoid-fs/*"
+  },
+  "private": true,
+  "devDependencies": {
+    "@nx/js": "16.8.1",
+    "nx": "16.8.1",
+    "nx-cloud": "latest",
+    "vite-node": "0.34.5"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
