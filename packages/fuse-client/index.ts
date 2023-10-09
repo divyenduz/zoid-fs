@@ -1,4 +1,5 @@
 import { SQLiteBackend } from "@zoid-fs/sqlite-backend";
+// TODO: inline source as a package https://github.com/direktspeed/node-fuse-bindings
 import fuse from "node-fuse-bindings";
 import { rename } from "./syscalls/rename";
 import { unlink } from "./syscalls/unlink";
@@ -37,8 +38,11 @@ import { setxattr } from "./syscalls/setxattr";
 
 /**
  * https://www.cs.hmc.edu/~geoff/classes/hmc.cs135.201109/homework/fuse/fuse_doc.html
+ * https://www.kernel.org/doc/html/next/filesystems/fuse.html
  * https://opensource.com/article/19/8/dig-binary-files-hexdump
  * diff <(xxd 1.png) <(xxd 1/1.png)
+ *
+ * https://github.com/greenbender/sqlfs/blob/master/sqlfs.py
  *
  */
 export class FuseClient {

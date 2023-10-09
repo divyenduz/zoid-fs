@@ -10,9 +10,6 @@ export const rmdir: (backend: SQLiteBackend) => MountOptions["rmdir"] = (
     const r = await backend.deleteFile(filenameWithoutSlash);
     match(r)
       .with({ status: "ok" }, (r) => {
-        // if (r.file.name.length > 255) {
-        //   cb(fuse.ENAMETOOLONG);
-        // }
         cb(0);
       })
       .with({ status: "not_found" }, () => {
