@@ -7,8 +7,7 @@ export const open: (backend: SQLiteBackend) => MountOptions["open"] = (
 ) => {
   return async (path, flags, cb) => {
     console.log("open(%s, %d)", path, flags);
-    const filenameWithoutSlash = path.slice(1);
-    const r = await backend.getFile(filenameWithoutSlash);
+    const r = await backend.getFile(path);
 
     match(r)
       .with({ status: "ok" }, (r) => {
@@ -20,7 +19,7 @@ export const open: (backend: SQLiteBackend) => MountOptions["open"] = (
          * by creating a file that doesn't already exist but breaks cat as cat returns empty
          * for files that don't exist
          */
-        const newFile = await backend.createFile(filenameWithoutSlash);
+        const newFile = await backend.createFile(path);
         match(newFile)
           .with({ status: "ok" }, (newFile) => {
             cb(0, newFile.file.id);

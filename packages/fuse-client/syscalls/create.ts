@@ -6,8 +6,7 @@ export const create: (backend: SQLiteBackend) => MountOptions["create"] = (
 ) => {
   return async (path, mode, cb) => {
     console.log("create(%s, %d)", path, mode);
-    const filenameWithoutSlash = path.slice(1);
-    const r = await backend.createFile(filenameWithoutSlash);
+    const r = await backend.createFile(path);
     if (r.status === "ok") {
       cb(0);
     } else {

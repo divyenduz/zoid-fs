@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { match } from "ts-pattern";
+import path from "path";
 
 export class SQLiteBackend {
   private prisma: PrismaClient;
@@ -17,16 +18,20 @@ export class SQLiteBackend {
     this.prisma.$connect();
   }
 
-  async getFiles() {
-    const files = await this.prisma.file.findMany();
+  async getFiles(dir: string) {
+    const files = await this.prisma.file.findMany({
+      where: {
+        dir,
+      },
+    });
     return files;
   }
 
-  async getFile(filename: string) {
+  async getFile(filepath: string) {
     try {
       const file = await this.prisma.file.findFirstOrThrow({
         where: {
-          name: filename,
+          path: filepath,
         },
       });
       return {
@@ -40,13 +45,15 @@ export class SQLiteBackend {
     }
   }
 
-  async createFile(filename: string, type = "file") {
+  async createFile(filepath: string, type = "file") {
     try {
+      const parsedPath = path.parse(filepath);
       const file = await this.prisma.file.create({
         data: {
-          name: filename,
+          name: parsedPath.base,
+          dir: parsedPath.dir,
+          path: filepath,
           type,
-          path: "/",
           content: Buffer.from([]),
         },
       });
@@ -61,19 +68,21 @@ export class SQLiteBackend {
     }
   }
 
-  async writeFile(filename: string, content: Buffer) {
+  async writeFile(filepath: string, content: Buffer) {
     try {
+      const parsedPath = path.parse(filepath);
       const file = await this.prisma.file.upsert({
         where: {
-          name: filename,
+          path: filepath,
         },
         update: {
           content,
         },
         create: {
-          name: filename,
+          name: parsedPath.base,
+          dir: parsedPath.dir,
+          path: filepath,
           type: "file",
-          path: "/",
           content,
         },
       });
@@ -88,11 +97,11 @@ export class SQLiteBackend {
     }
   }
 
-  async deleteFile(filename: string) {
+  async deleteFile(filepath: string) {
     try {
       const file = await this.prisma.file.delete({
         where: {
-          name: filename,
+          path: filepath,
         },
       });
       return {
@@ -106,14 +115,20 @@ export class SQLiteBackend {
     }
   }
 
-  async renameFile(srcFilename: string, destFilename: string) {
+  async renameFile(srcPath: string, destPath: string) {
     try {
+      const parsedSrcPath = path.parse(srcPath);
+      const parsedDestPath = path.parse(destPath);
       const file = await this.prisma.file.update({
         where: {
-          name: srcFilename,
+          name: parsedSrcPath.base,
+          dir: parsedSrcPath.dir,
+          path: srcPath,
         },
         data: {
-          name: destFilename,
+          name: parsedDestPath.base,
+          dir: parsedDestPath.dir,
+          path: destPath,
         },
       });
       return {

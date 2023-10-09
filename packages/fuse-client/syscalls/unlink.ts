@@ -6,8 +6,7 @@ export const unlink: (backend: SQLiteBackend) => MountOptions["unlink"] = (
 ) => {
   return async (path, cb) => {
     console.log("unlink(%s)", path);
-    const filenameWithoutSlash = path.slice(1);
-    const r = await backend.deleteFile(filenameWithoutSlash);
+    const r = await backend.deleteFile(path);
     if (r.status === "ok") {
       cb(0);
     } else {

@@ -6,8 +6,7 @@ export const rmdir: (backend: SQLiteBackend) => MountOptions["rmdir"] = (
 ) => {
   return async (path, cb) => {
     console.log("rmdir(%s)", path);
-    const filenameWithoutSlash = path.slice(1);
-    const r = await backend.deleteFile(filenameWithoutSlash);
+    const r = await backend.deleteFile(path);
     match(r)
       .with({ status: "ok" }, (r) => {
         cb(0);

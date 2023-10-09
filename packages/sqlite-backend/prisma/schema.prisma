@@ -16,10 +16,10 @@ model File {
   parentDir Int      @default(0) // Note: 0 means root
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name      String   @unique // Note: beacuse of directories, name is not unique anymore but we need to make a compound index with keys (name, parentDir)
-  path      String
+  name      String
+  dir       String
+  path      String   @unique
   // fileType  String // text or binary
-  content   Bytes // also support binary
-  // binary    Bytes // also support binary
+  content   Bytes
   isLocked  Boolean  @default(false)
 }

@@ -10,9 +10,8 @@ describe("move", () => {
 
   test("move on same fs", async () => {
     const cwd = jetpack.cwd(TEST_FS_PATH);
-    cwd.remove(TEST_FILE); // TODO: tmp fix me
-    cwd.remove("move2.txt"); // TODO: tmp fix me
-
+    cwd.remove(TEST_FILE);
+    cwd.remove("mv2.txt");
     expect(
       cwd.find({
         matching: TEST_FILE,

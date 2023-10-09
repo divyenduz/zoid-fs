@@ -21,8 +21,7 @@ export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
       return;
     }
 
-    const filenameWithoutSlash = path.slice(1);
-    const r = await backend.getFile(filenameWithoutSlash);
+    const r = await backend.getFile(path);
 
     match(r)
       .with({ status: "ok" }, (r) => {

@@ -7,15 +7,11 @@ export const truncate: (backend: SQLiteBackend) => MountOptions["truncate"] = (
 ) => {
   return async (path, size, cb) => {
     console.log("truncate(%s, %d)", path, size);
-    const filenameWithoutSlash = path.slice(1);
-    const r = await backend.getFile(filenameWithoutSlash);
+    const r = await backend.getFile(path);
     match(r)
       .with({ status: "ok" }, async (r) => {
         const truncatedContent = r.file.content.slice(0, size);
-        const writeResult = await backend.writeFile(
-          filenameWithoutSlash,
-          truncatedContent
-        );
+        const writeResult = await backend.writeFile(path, truncatedContent);
         match(writeResult)
           .with({ status: "ok" }, () => {
             cb(0);
