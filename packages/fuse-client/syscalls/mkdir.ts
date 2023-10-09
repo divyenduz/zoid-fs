@@ -10,6 +10,7 @@ export const mkdir: (backend: SQLiteBackend) => MountOptions["mkdir"] = (
 
     if (filename.length > 255) {
       cb(fuse.ENAMETOOLONG);
+      return;
     }
 
     const dir = await backend.createFile(filepath, "dir");
