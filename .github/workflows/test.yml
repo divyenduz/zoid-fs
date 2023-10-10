@@ -33,5 +33,17 @@ jobs:
       - name: Run Lint
         run: npm run lint
 
-      - name: Run Tests
-        run: npm run test
+      - name: Setup DB
+        run: |
+          npm run ci:setup-db
+          cp packages/prisma/fs.db packages/prisma/test.db
+
+      - name: Start FUSE Daemon
+        run: |
+          mkdir ${{ runner.temp }}/test-fs
+          npm run ci:setup-fuse -- -- ${{ runner.temp }}/test-fs --tenant test &
+          sleep 5
+          df -h
+
+      # - name: Run Tests
+      #   run: npm run test

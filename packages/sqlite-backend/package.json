@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "lint": "npx tsc --noEmit",
-    "generate": "npx prisma generate"
+    "generate": "npx prisma generate",
+    "ci:setup-db": "npx prisma db push --accept-data-loss"
   },
   "private": true,
   "devDependencies": {

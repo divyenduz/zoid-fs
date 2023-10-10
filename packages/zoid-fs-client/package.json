@@ -6,6 +6,7 @@
   "scripts": {
     "start": "vite-node --watch index.ts /home/div/code/vfs/1",
     "test:prepare": "vite-node --watch index.ts /home/div/code/vfs/test-fs --tenant test",
+    "ci:setup-fuse": "vite-node --watch index.ts",
     "test": "vitest",
     "lint": "npx tsc --noEmit"
   },
