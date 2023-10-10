@@ -275,7 +275,11 @@ jobs:
 
       - name: fstest Description
         run: |
-          cat ${{ github.workspace }}/packages/pjd-fstest/tests/${{matrix.tests}} | grep desc
+          if [ -f "${{ github.workspace }}/packages/pjd-fstest/tests/${{matrix.tests}}" ]; then
+            cat ${{ github.workspace }}/packages/pjd-fstest/tests/${{matrix.tests}} | grep desc
+          else
+            echo "${{ matrix.tests }}/*"
+          fi
 
       - name: Run fstest - ${{ matrix.tests }}
         run: |
