@@ -44,6 +44,7 @@ jobs:
           npm run ci:setup-fuse -- -- ${{ runner.temp }}/test-fs --tenant test &
           sleep 5
           df -h
+          cd ${{ runner.temp }}
           tree -la
 
       # - name: Run Tests

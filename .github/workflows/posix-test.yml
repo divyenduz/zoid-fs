@@ -24,7 +24,7 @@ jobs:
           cache: "npm"
 
       - name: Install Linux Libs
-        run: sudo apt update && sudo apt install libfuse-dev build-essential libboost-all-dev cmake flex
+        run: sudo apt update && sudo apt install libfuse-dev build-essential libboost-all-dev cmake flex libacl1-dev
 
       - name: Install Dependencies
         run: npm install
@@ -46,6 +46,7 @@ jobs:
           npm run ci:setup-fuse -- -- ${{ runner.temp }}/test-fs --tenant test &
           sleep 5
           df -h
+          cd ${{ runner.temp }}
           tree -la
 
       - name: Setup fstest
