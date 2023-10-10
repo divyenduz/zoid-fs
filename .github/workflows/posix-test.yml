@@ -10,14 +10,24 @@ env:
 
 jobs:
   build:
-    name: POSIX Test
+    strategy:
+      matrix:
+        tests: [
+          'mkdir/01.t'
+          'mkdir/02.t'
+        ]
+    name: POSIX Test - ${{ matrix.tests }}
     timeout-minutes: 30
     runs-on: [ubuntu-latest]
-    # runs-on: [self-hosted]
+    
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
+
+      - name: Test Description
+        run: cat ${{ github.workspace }}/packages/pjd-fstest/tests/${{matrix.tests}} | grep desc
+
       - uses: actions/setup-node@v3
         with:
           node-version: "18"
@@ -57,4 +67,4 @@ jobs:
       - name: Run fstest
         run: |
           cd ${{ runner.temp }}/test-fs
-          prove -r ${{ github.workspace }}/packages/pjd-fstest/tests/mkdir/00.t
+          prove -r ${{ github.workspace }}/packages/pjd-fstest/tests/${{matrix.tests}}
