@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { match } from "ts-pattern";
 import path from "path";
+import { constants } from "fs";
 
 export class SQLiteBackend {
   private prisma: PrismaClient;
@@ -42,7 +43,10 @@ export class SQLiteBackend {
               id: fileOrSymlink.targetId,
             },
           });
-          return targetFile;
+          return {
+            ...targetFile,
+            mode: constants.S_IFLNK,
+          };
         })
         .otherwise(() => fileOrSymlink);
 

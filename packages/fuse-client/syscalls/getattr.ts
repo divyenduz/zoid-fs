@@ -1,6 +1,7 @@
 import { SQLiteBackend } from "@zoid-fs/sqlite-backend";
 import fuse, { MountOptions } from "node-fuse-bindings";
 import { match } from "ts-pattern";
+import { constants } from "fs";
 
 export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
   backend
