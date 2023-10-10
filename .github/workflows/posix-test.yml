@@ -12,14 +12,11 @@ jobs:
   build:
     strategy:
       matrix:
-        tests: [
-          'mkdir/01.t'
-          'mkdir/02.t'
-        ]
+        tests: ["mkdir/01.t", "mkdir/02.t"]
     name: POSIX Test - ${{ matrix.tests }}
     timeout-minutes: 30
     runs-on: [ubuntu-latest]
-    
+
     steps:
       - uses: actions/checkout@v3
         with:
