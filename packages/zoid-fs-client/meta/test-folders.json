@@ -1,0 +1,18 @@
+[
+  "chflags",
+  "chmod",
+  "chown",
+  "ftruncate",
+  "link",
+  "mkdir",
+  "mkfifo",
+  "mknod",
+  "open",
+  "rename",
+  "rmdir",
+  "symlink",
+  "truncate",
+  "unlink",
+  "utime",
+  "xacl"
+]
