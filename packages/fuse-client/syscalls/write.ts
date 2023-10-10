@@ -16,7 +16,11 @@ export const write: (backend: SQLiteBackend) => MountOptions["write"] = (
 
     const newContent = Buffer.concat([oldContent, chunk]);
 
-    const r = await backend.writeFile(path, newContent);
+    //@ts-expect-error fix types
+    const context = fuse.context();
+    const { uid, gid } = context;
+
+    const r = await backend.writeFile(path, newContent, uid, gid);
     match(r)
       .with({ status: "ok" }, (r) => {
         cb(chunk.length);

@@ -22,18 +22,18 @@ export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
     }
 
     const r = await backend.getFile(path);
-
     match(r)
       .with({ status: "ok" }, (r) => {
+        const { mtime, atime, ctime, uid, gid, mode } = r.file;
         cb(0, {
-          mtime: r.file.updatedAt,
-          atime: r.file.updatedAt,
-          ctime: r.file.updatedAt,
+          mtime,
+          atime,
+          ctime,
           nlink: 1,
           size: r.file.content.length,
-          mode: r.file.type === "dir" ? 16877 : 33188,
-          uid: process.getuid ? process.getuid() : 0,
-          gid: process.getgid ? process.getgid() : 0,
+          mode: mode,
+          uid: uid,
+          gid: gid,
         });
       })
       .with({ status: "not_found" }, () => {

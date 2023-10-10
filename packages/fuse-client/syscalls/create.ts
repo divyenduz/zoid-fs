@@ -6,7 +6,12 @@ export const create: (backend: SQLiteBackend) => MountOptions["create"] = (
 ) => {
   return async (path, mode, cb) => {
     console.log("create(%s, %d)", path, mode);
-    const r = await backend.createFile(path);
+
+    //@ts-expect-error fix types
+    const context = fuse.context();
+    const { uid, gid } = context;
+
+    const r = await backend.createFile(path, "file", mode, uid, gid);
     if (r.status === "ok") {
       cb(0);
     } else {

@@ -19,7 +19,12 @@ export const open: (backend: SQLiteBackend) => MountOptions["open"] = (
          * by creating a file that doesn't already exist but breaks cat as cat returns empty
          * for files that don't exist
          */
-        const newFile = await backend.createFile(path);
+
+        //@ts-expect-error fix types
+        const context = fuse.context();
+        const { uid, gid } = context;
+
+        const newFile = await backend.createFile(path, "file", 0o777, uid, gid);
         match(newFile)
           .with({ status: "ok" }, (newFile) => {
             cb(0, newFile.file.id);

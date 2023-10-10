@@ -13,7 +13,11 @@ export const mkdir: (backend: SQLiteBackend) => MountOptions["mkdir"] = (
       return;
     }
 
-    const dir = await backend.createFile(filepath, "dir");
+    //@ts-expect-error fix types
+    const context = fuse.context();
+    const { uid, gid } = context;
+
+    const dir = await backend.createFile(filepath, "dir", mode, uid, gid);
     if (dir.status === "ok") {
       cb(0);
     } else {

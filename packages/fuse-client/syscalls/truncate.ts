@@ -11,7 +11,17 @@ export const truncate: (backend: SQLiteBackend) => MountOptions["truncate"] = (
     match(r)
       .with({ status: "ok" }, async (r) => {
         const truncatedContent = r.file.content.slice(0, size);
-        const writeResult = await backend.writeFile(path, truncatedContent);
+
+        //@ts-expect-error fix types
+        const context = fuse.context();
+        const { uid, gid } = context;
+
+        const writeResult = await backend.writeFile(
+          path,
+          truncatedContent,
+          uid,
+          gid
+        );
         match(writeResult)
           .with({ status: "ok" }, () => {
             cb(0);
