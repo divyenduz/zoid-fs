@@ -5,7 +5,8 @@
   "scripts": {
     "start": "nx run-many --parallel 1 --output-style=stream --target=start --projects @zoid-fs/zoid-fs-client",
     "test": "nx run-many --parallel 1 --output-style=stream --target=test --projects @zoid-fs/zoid-fs-client",
-    "lint": "nx run-many --parallel 4 --output-style=stream --target=lint --projects @zoid-fs/*"
+    "lint": "nx run-many --parallel 4 --output-style=stream --target=lint --projects @zoid-fs/*",
+    "ts:madge": "npx madge --extensions ts ./packages -i /tmp/img.png && mv /tmp/img.png ."
   },
   "private": true,
   "devDependencies": {
