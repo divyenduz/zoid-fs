@@ -9,14 +9,10 @@ env:
   CI: 1
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        tests: ["mkdir/01.t", "mkdir/02.t"]
-    name: POSIX Test - ${{ matrix.tests }}
+  prepare:
+    name: POSIX Test - Prepare
     timeout-minutes: 30
     runs-on: [ubuntu-latest]
-
     steps:
       - uses: actions/checkout@v3
         with:
@@ -61,7 +57,17 @@ jobs:
           cd packages/pjd-fstest
           make
 
-      - name: Run fstest
+  build:
+    needs: prepare
+    strategy:
+      matrix:
+        tests: ["mkdir/01.t", "mkdir/02.t"]
+    name: POSIX Test - ${{ matrix.tests }}
+    timeout-minutes: 30
+    runs-on: [ubuntu-latest]
+
+    steps:
+      - name: Run fstest - ${{ matrix.tests }}
         run: |
           cd ${{ runner.temp }}/test-fs
           prove -r ${{ github.workspace }}/packages/pjd-fstest/tests/${{matrix.tests}}
