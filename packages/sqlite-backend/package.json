@@ -4,7 +4,8 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "lint": "npx tsc --noEmit"
+    "lint": "npx tsc --noEmit",
+    "generate": "npx prisma generate"
   },
   "private": true,
   "devDependencies": {
