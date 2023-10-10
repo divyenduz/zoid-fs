@@ -1,4 +1,4 @@
-name: Test
+name: POSIX Test
 # This workflow is triggered on pushes to the repository.
 on:
   push:
@@ -10,7 +10,7 @@ env:
 
 jobs:
   build:
-    name: Test
+    name: POSIX Test
     timeout-minutes: 30
     runs-on: [ubuntu-latest]
     # runs-on: [self-hosted]
@@ -24,7 +24,7 @@ jobs:
           cache: "npm"
 
       - name: Install Linux Libs
-        run: sudo apt install libfuse-dev
+        run: sudo apt update && sudo apt install libfuse-dev build-essential libboost-all-dev cmake flex
 
       - name: Install Dependencies
         run: npm install
