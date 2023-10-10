@@ -21,6 +21,9 @@ jobs:
           node-version: "18"
           cache: "npm"
 
+      - name: Install Linux Libs
+        run: sudo apt install libfuse-dev
+
       - name: Install Dependencies
         run: npm install
 
