@@ -16,6 +16,8 @@ jobs:
     # runs-on: [self-hosted]
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - uses: actions/setup-node@v3
         with:
           node-version: "18"
@@ -46,5 +48,12 @@ jobs:
           df -h
           tree -la
 
-      # - name: Run Tests
-      #   run: npm run test
+      - name: Setup fstest
+        run: |
+          cd packages/pjd-fstest
+          make
+
+      - name: Run fstest
+        run: |
+          cd ${{ runner.temp }}/test-fs
+          prove -r ${{ github.workspace }}/packages/pjd-fstest/tests/mkdir/00.t
