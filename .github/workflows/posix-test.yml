@@ -18,9 +18,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Test Description
-        run: cat ${{ github.workspace }}/packages/pjd-fstest/tests/${{matrix.tests}} | grep desc
-
       - uses: actions/setup-node@v3
         with:
           node-version: "18"
@@ -67,6 +64,9 @@ jobs:
     runs-on: [ubuntu-latest]
 
     steps:
+      - name: Test Description
+        run: cat ${{ github.workspace }}/packages/pjd-fstest/tests/${{matrix.tests}} | grep desc
+
       - name: Run fstest - ${{ matrix.tests }}
         run: |
           cd ${{ runner.temp }}/test-fs
