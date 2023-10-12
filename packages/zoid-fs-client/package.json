@@ -18,9 +18,10 @@
     "vite-node": "0.34.5"
   },
   "dependencies": {
+    "@zoid-fs/turso-backend": "*",
     "@zoid-fs/sqlite-backend": "*",
     "@zoid-fs/fuse-client": "*",
-    "fs-jetpack": "^5.1.0",
-    "vitest": "^0.34.5"
+    "fs-jetpack": "5.1.0",
+    "vitest": "0.34.5"
   }
 }

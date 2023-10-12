@@ -1,5 +1,5 @@
 {
-  "name": "@zoid-fs/sqlite-backend",
+  "name": "@zoid-fs/turso-backend",
   "version": "0.0.0",
   "type": "module",
   "license": "MIT",
@@ -17,8 +17,9 @@
     "vite-node": "0.34.5"
   },
   "dependencies": {
-    "@prisma/client": "5.4.2",
-    "@zoid-fs/common": "*",
-    "ts-pattern": "^5.0.5"
+    "@libsql/client": "0.3.5",
+    "@prisma/adapter-libsql": "5.4.2",
+    "@zoid-fs/sqlite-backend": "*",
+    "@zoid-fs/common": "*"
   }
 }
