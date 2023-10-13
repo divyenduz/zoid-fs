@@ -20,12 +20,14 @@ console.table({
   tenant: tenantArg,
 });
 
-const backend = match(backendArg)
+const backend = await match(backendArg)
   .with("sqlite", () => {
     return new SQLiteBackend(`file:./${tenantArg}.db`);
   })
-  .with("turso", () => {
-    return new TursoBackend();
+  .with("turso", async () => {
+    const tursoBackend = new TursoBackend();
+    await tursoBackend.sync();
+    return tursoBackend;
   })
   .exhaustive();
 
