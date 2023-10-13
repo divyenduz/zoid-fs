@@ -1,7 +1,6 @@
 import { SQLiteBackend } from "@zoid-fs/sqlite-backend";
 import fuse, { MountOptions } from "node-fuse-bindings";
 import { match } from "ts-pattern";
-import { constants } from "fs";
 
 export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
   backend
@@ -25,7 +24,7 @@ export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
     const r = await backend.getFile(path);
     match(r)
       .with({ status: "ok" }, (r) => {
-        const { mtime, atime, ctime, uid, gid, mode } = r.file;
+        const { mtime, atime, ctime, mode } = r.file;
         cb(0, {
           mtime,
           atime,
@@ -33,8 +32,8 @@ export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
           nlink: 1,
           size: r.file.content.length,
           mode: mode,
-          uid: uid,
-          gid: gid,
+          uid: process.getuid ? process.getuid() : 0,
+          gid: process.getgid ? process.getgid() : 0,
         });
       })
       .with({ status: "not_found" }, () => {

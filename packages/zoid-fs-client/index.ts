@@ -8,14 +8,17 @@ type BackendType = "sqlite" | "turso";
 const args = arg({
   "--tenant": String,
   "--backend": String, // sqlite or turso
+  "--turso-embedded": Boolean,
 });
 
 const mountPathArg = args._[0];
 const tenantArg = args["--tenant"] || "fs";
 const backendArg = (args["--backend"] || "sqlite") as BackendType;
+const tursoEmbeddedArg = args["--turso-embedded"] || false;
 
 console.table({
   backend: backendArg,
+  tursoEmbeddedArg,
   mountPath: mountPathArg,
   tenant: tenantArg,
 });
@@ -25,7 +28,7 @@ const backend = await match(backendArg)
     return new SQLiteBackend(`file:./${tenantArg}.db`);
   })
   .with("turso", async () => {
-    const tursoBackend = new TursoBackend();
+    const tursoBackend = new TursoBackend(tursoEmbeddedArg);
     await tursoBackend.sync();
     return tursoBackend;
   })
