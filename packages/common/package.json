@@ -1,0 +1,22 @@
+{
+  "name": "@zoid-fs/common",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "lint": "npx tsc --noEmit",
+    "generate": "npx prisma generate",
+    "ci:setup-db": "npx prisma db push --accept-data-loss"
+  },
+  "private": true,
+  "devDependencies": {
+    "@nx/js": "16.8.1",
+    "nx": "16.8.1",
+    "nx-cloud": "latest",
+    "prisma": "5.4.2",
+    "vite-node": "0.34.5"
+  },
+  "dependencies": {
+    "@prisma/client": "5.4.2"
+  }
+}

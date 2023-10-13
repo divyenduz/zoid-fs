@@ -1,0 +1,24 @@
+{
+  "name": "@zoid-fs/turso-backend",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "lint": "npx tsc --noEmit",
+    "generate": "npx prisma generate",
+    "ci:setup-db": "npx prisma db push --accept-data-loss"
+  },
+  "private": true,
+  "devDependencies": {
+    "@nx/js": "16.8.1",
+    "nx": "16.8.1",
+    "nx-cloud": "latest",
+    "prisma": "5.4.2",
+    "vite-node": "0.34.5"
+  },
+  "dependencies": {
+    "@prisma/adapter-libsql": "5.4.2",
+    "@zoid-fs/sqlite-backend": "*",
+    "@zoid-fs/common": "*"
+  }
+}
