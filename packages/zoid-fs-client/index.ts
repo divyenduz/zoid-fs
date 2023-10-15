@@ -2,7 +2,7 @@ import { SQLiteBackend } from "@zoid-fs/sqlite-backend";
 import { FuseClient } from "@zoid-fs/fuse-client";
 import arg from "arg";
 import { match } from "ts-pattern";
-import { TursoBackend } from "../turso-backend";
+import { TursoBackend } from "@zoid-fs/turso-backend";
 
 type BackendType = "sqlite" | "turso";
 const args = arg({
