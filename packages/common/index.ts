@@ -11,6 +11,8 @@ type Result<T> =
       status: "not_found";
     };
 
+// TODO: bump this based on the latest state of the actual backend!
+
 export interface Backend {
   getFiles: (dir: string) => Promise<File[]>;
   getFile: (filepath: string) => Promise<Result<File>>;
@@ -26,7 +28,6 @@ export interface Backend {
 
   writeFile: (
     filepath: string,
-    content: Buffer,
     uid: number,
     gid: number
   ) => Promise<Result<File>>;
