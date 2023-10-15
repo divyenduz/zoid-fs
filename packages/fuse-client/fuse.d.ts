@@ -1,4 +1,4 @@
-declare module "node-fuse-bindings" {
+declare module "@zoid-fs/node-fuse-bindings" {
   function mount(
     mountPoint: string,
     ops: MountOptions,

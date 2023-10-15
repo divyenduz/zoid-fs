@@ -14,7 +14,7 @@
     "vite-node": "0.34.5"
   },
   "dependencies": {
-    "node-fuse-bindings": "2.12.4",
+    "@zoid-fs/node-fuse-bindings": "*",
     "ts-pattern": "5.0.5"
   }
 }

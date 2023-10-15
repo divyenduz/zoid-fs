@@ -1,6 +1,6 @@
 import { SQLiteBackend } from "@zoid-fs/sqlite-backend";
 // TODO: inline source as a package https://github.com/direktspeed/node-fuse-bindings
-import fuse from "node-fuse-bindings";
+import fuse from "@zoid-fs/node-fuse-bindings";
 import { rename } from "./syscalls/rename";
 import { unlink } from "./syscalls/unlink";
 import { mkdir } from "./syscalls/mkdir";
