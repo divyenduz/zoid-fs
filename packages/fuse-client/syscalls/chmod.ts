@@ -1,7 +1,7 @@
 import { SQLiteBackend } from "@zoid-fs/sqlite-backend";
-import { MountOptions } from "node-fuse-bindings";
+import { MountOptions } from "@zoid-fs/node-fuse-bindings";
 import { match } from "ts-pattern";
-import fuse from "node-fuse-bindings";
+import fuse from "@zoid-fs/node-fuse-bindings";
 
 export const chmod: (backend: SQLiteBackend) => MountOptions["chmod"] = (
   backend

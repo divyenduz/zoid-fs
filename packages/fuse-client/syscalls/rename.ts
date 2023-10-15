@@ -1,5 +1,5 @@
 import { SQLiteBackend } from "@zoid-fs/sqlite-backend";
-import fuse, { MountOptions } from "node-fuse-bindings";
+import fuse, { MountOptions } from "@zoid-fs/node-fuse-bindings";
 import path from "path";
 
 export const rename: (backend: SQLiteBackend) => MountOptions["rename"] = (

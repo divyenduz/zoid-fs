@@ -1,5 +1,5 @@
 import { SQLiteBackend } from "@zoid-fs/sqlite-backend";
-import { MountOptions } from "node-fuse-bindings";
+import { MountOptions } from "@zoid-fs/node-fuse-bindings";
 import { symlink } from "./symlink";
 
 export const link: (backend: SQLiteBackend) => MountOptions["link"] = (
