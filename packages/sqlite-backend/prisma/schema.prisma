@@ -1,6 +1,7 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// With NixOS https://github.com/prisma/prisma/issues/3026
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
