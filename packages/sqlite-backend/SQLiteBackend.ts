@@ -1,11 +1,23 @@
-import { PrismaClient } from "@prisma/client";
+import { Content, PrismaClient } from "@prisma/client";
 import { Backend } from "@zoid-fs/common";
 import { match } from "ts-pattern";
 import path from "path";
 import { constants } from "fs";
+import { rawCreateMany } from "./prismaRawUtil";
+import { WriteBuffer } from "./WriteBuffer";
+
+export type ContentChunk = {
+  content: Buffer;
+  offset: number;
+  size: number;
+};
+
+const WRITE_BUFFER_SIZE = 10;
 
 export class SQLiteBackend implements Backend {
-  private prisma: PrismaClient;
+  private readonly writeBuffers: Map<string, WriteBuffer<ContentChunk>> =
+    new Map();
+  private readonly prisma: PrismaClient;
   constructor(prismaOrDbUrl?: PrismaClient | string) {
     if (prismaOrDbUrl instanceof PrismaClient) {
       this.prisma = prismaOrDbUrl;
@@ -22,6 +34,27 @@ export class SQLiteBackend implements Backend {
 
       this.prisma.$connect();
     }
+  }
+
+  async write(filepath: string, chunk: ContentChunk) {
+    const writeBuffer = match(this.writeBuffers.has(filepath))
+      .with(true, () => this.writeBuffers.get(filepath))
+      .with(false, () => {
+        this.writeBuffers.set(
+          filepath,
+          new WriteBuffer(WRITE_BUFFER_SIZE, async (bufferSlice) => {
+            await this.writeFileChunks(filepath, bufferSlice);
+          })
+        );
+        return this.writeBuffers.get(filepath);
+      })
+      .exhaustive();
+    await writeBuffer!.write(chunk);
+  }
+
+  async flush(filepath: string) {
+    const writeBuffer = this.writeBuffers.get(filepath);
+    await writeBuffer?.flush();
   }
 
   async getFiles(dir: string) {
@@ -189,29 +222,36 @@ export class SQLiteBackend implements Backend {
     }
   }
 
-  async writeFileChunk(
-    filepath: string,
-    content: Buffer,
-    offset: number,
-    size: number
-  ) {
+  private async writeFileChunks(filepath: string, chunks: ContentChunk[]) {
+    if (chunks.length === 0) {
+      return {
+        status: "ok" as const,
+        chunks,
+      };
+    }
+
     try {
-      const contentChunk = await this.prisma.content.create({
-        data: {
-          offset,
-          size,
-          content,
-          file: {
-            connect: {
-              path: filepath,
-            },
-          },
-        },
-      });
+      const rFile = await this.getFile(filepath);
+      const file = rFile.file;
+
+      await rawCreateMany<Omit<Content, "id">>(
+        this.prisma,
+        "Content",
+        ["content", "offset", "size", "fileId"],
+        chunks.map((chunk) => {
+          const { content, offset, size } = chunk;
+          return {
+            content,
+            offset,
+            size,
+            fileId: file?.id,
+          };
+        })
+      );
 
       return {
         status: "ok" as const,
-        chunk: contentChunk,
+        chunks,
       };
     } catch (e) {
       return {

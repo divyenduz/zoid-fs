@@ -19,6 +19,7 @@
   "dependencies": {
     "@prisma/client": "5.4.2",
     "@zoid-fs/common": "*",
-    "ts-pattern": "^5.0.5"
+    "sql-template-tag": "5.1.0",
+    "ts-pattern": "5.0.5"
   }
 }
