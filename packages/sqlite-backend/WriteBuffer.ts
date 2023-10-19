@@ -10,6 +10,8 @@ export class WriteBuffer<T> {
     if (this.buffer.length >= this.size) {
       await this.flush();
     }
+    // TODO: implement a time based flush, like, if there are no writes for 100ms
+    // call flush
   }
 
   async flush(): Promise<void> {
