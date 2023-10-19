@@ -4,7 +4,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start": "vite-node --watch index.ts /home/divyendusingh/zoid/vfs/1",
+    "start": "vite-node --watch index.ts /home/divyenduz/Documents/zoid/vfs/1",
     "test:prepare": "vite-node --watch index.ts /home/div/code/vfs/test-fs --tenant test",
     "ci:setup-fuse": "vite-node --watch index.ts",
     "test": "vitest",
