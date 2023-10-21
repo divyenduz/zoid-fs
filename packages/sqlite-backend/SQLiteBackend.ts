@@ -234,6 +234,22 @@ export class SQLiteBackend implements Backend {
       const rFile = await this.getFile(filepath);
       const file = rFile.file;
 
+      /**
+       *
+       * Simulate "upsert" by deleting anything within a block range for a file before bulk inserting!
+       * TODO: this should happen in a transaction
+       */
+
+      for await (const chunk of chunks) {
+        await this.prisma.content.deleteMany({
+          where: {
+            offset: chunk.offset,
+            size: chunk.size,
+            fileId: file?.id,
+          },
+        });
+      }
+
       await rawCreateMany<Omit<Content, "id">>(
         this.prisma,
         "Content",
