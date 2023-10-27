@@ -7,20 +7,6 @@ export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
 ) => {
   return async (path, cb) => {
     console.log("getattr(%s)", path);
-    if (path === "/") {
-      cb(0, {
-        mtime: new Date(),
-        atime: new Date(),
-        ctime: new Date(),
-        nlink: 1,
-        size: 100, // Directory size, chosen arbitrarily
-        mode: 16877,
-        uid: process.getuid ? process.getuid() : 0,
-        gid: process.getgid ? process.getgid() : 0,
-      });
-      return;
-    }
-
     const r = await backend.getFile(path);
 
     await match(r)
@@ -39,6 +25,7 @@ export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
           nlink: 1,
           size: rSize.size,
           mode: mode,
+          // TODO: enable posix mode where real uid/gid are returned
           uid: process.getuid ? process.getuid() : 0,
           gid: process.getgid ? process.getgid() : 0,
         });
