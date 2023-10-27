@@ -6,6 +6,11 @@ export const utimens: (backend: SQLiteBackend) => MountOptions["utimens"] = (
 ) => {
   return async (path, atime, mtime, cb) => {
     console.log("utimens(%s, %s, %s)", path, atime, mtime);
+    try {
+      await backend.updateTimes(path, atime, mtime);
+    } catch (e) {
+      console.error(e);
+    }
     cb(0);
   };
 };

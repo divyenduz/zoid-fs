@@ -322,6 +322,14 @@ export class SQLiteBackend implements Backend {
     try {
       const parsedSrcPath = path.parse(srcPath);
       const parsedDestPath = path.parse(destPath);
+
+      // Note: Delete if the destiantion path already exists
+      await this.prisma.file.deleteMany({
+        where: {
+          path: destPath,
+        },
+      });
+
       const file = await this.prisma.file.update({
         where: {
           name: parsedSrcPath.base,
@@ -339,6 +347,7 @@ export class SQLiteBackend implements Backend {
         file: file,
       };
     } catch (e) {
+      console.error(e);
       return {
         // TODO: not_found is not the truth, it can fail for other reasons
         status: "not_found" as const,
@@ -354,6 +363,28 @@ export class SQLiteBackend implements Backend {
         },
         data: {
           mode,
+        },
+      });
+      return {
+        status: "ok" as const,
+        file: file,
+      };
+    } catch (e) {
+      return {
+        status: "not_found" as const,
+      };
+    }
+  }
+
+  async updateTimes(filepath: string, atime: number, mtime: number) {
+    try {
+      const file = await this.prisma.file.update({
+        where: {
+          path: filepath,
+        },
+        data: {
+          atime: new Date(atime),
+          mtime: new Date(mtime),
         },
       });
       return {
