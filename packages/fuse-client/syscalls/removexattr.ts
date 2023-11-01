@@ -5,7 +5,7 @@ export const removexattr: (
   backend: SQLiteBackend
 ) => MountOptions["removexattr"] = (backend) => {
   return async (path, name, cb) => {
-    console.log("removexattr(%s, %s)", path, name);
+    console.info("removexattr(%s, %s)", path, name);
     cb(0);
   };
 };

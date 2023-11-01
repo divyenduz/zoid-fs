@@ -8,6 +8,9 @@ export class WriteBuffer<T> {
   async write(item: T): Promise<void> {
     this.buffer.push(item);
     if (this.buffer.length >= this.size) {
+      console.info(
+        `WriteBuffer.write: Flushing because buffer size exceeded the set limit of ${this.size}`
+      );
       await this.flush();
     }
     // TODO: implement a time based flush, like, if there are no writes for 100ms

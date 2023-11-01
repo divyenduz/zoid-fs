@@ -5,7 +5,7 @@ export const statfs: (backend: SQLiteBackend) => MountOptions["statfs"] = (
   backend
 ) => {
   return (path, cb) => {
-    console.log("statfs(%s)", path);
+    console.info("statfs(%s)", path);
     // TODO: fill actual values, these are just placeholders
     cb(0, {
       bsize: 1000000, // Block size
