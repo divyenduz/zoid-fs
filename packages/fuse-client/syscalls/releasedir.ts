@@ -5,7 +5,7 @@ export const releasedir: (
   backend: SQLiteBackend
 ) => MountOptions["releasedir"] = (backend) => {
   return async (path, fd, cb) => {
-    console.log("releasedir(%s, %d)", path, fd);
+    console.info("releasedir(%s, %d)", path, fd);
     cb(0);
   };
 };

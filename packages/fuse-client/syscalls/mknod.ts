@@ -6,7 +6,7 @@ export const mknod: (backend: SQLiteBackend) => MountOptions["mknod"] = (
   backend
 ) => {
   return async (path, mode, dev, cb) => {
-    console.log("mknod(%s, %d, %d)", path, mode, dev);
+    console.info("mknod -> create(%s, %d, %d)", path, mode, dev);
     //@ts-expect-error fix types
     // TODO: implement mknod properly
     create(backend)(path, mode, cb);

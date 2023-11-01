@@ -5,7 +5,7 @@ export const access: (backend: SQLiteBackend) => MountOptions["access"] = (
   backend
 ) => {
   return async (path, mode, cb) => {
-    console.log("access(%s, %d)", path, mode);
+    console.info("access(%s, %d)", path, mode);
     cb(0);
   };
 };

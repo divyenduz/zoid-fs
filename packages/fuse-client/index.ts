@@ -97,7 +97,7 @@ export class FuseClient {
           this.unmountFS(mountPath);
           throw err;
         }
-        console.log("filesystem mounted on " + mountPath);
+        console.info("filesystem mounted on " + mountPath);
       }
     );
   }
@@ -105,12 +105,12 @@ export class FuseClient {
   unmountFS(mountPath: string) {
     fuse.unmount(mountPath, (err) => {
       if (err) {
-        console.log(
+        console.info(
           "filesystem at " + mountPath + " not unmounted",
           err.toString()
         );
       } else {
-        console.log("filesystem at " + mountPath + " unmounted");
+        console.info("filesystem at " + mountPath + " unmounted");
       }
     });
   }

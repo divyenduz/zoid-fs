@@ -36,7 +36,7 @@ const backend = await match(backendArg)
 
 const fuseClient = new FuseClient(backend);
 setTimeout(async () => {
-  console.log("mounting: fuse mount points");
+  console.info("mounting: fuse mount points");
   fuseClient.mountFS(mountPathArg);
 }, 1000);
 

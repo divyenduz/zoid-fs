@@ -5,7 +5,7 @@ export const getxattr: (backend: SQLiteBackend) => MountOptions["getxattr"] = (
   backend
 ) => {
   return async (path, name, buffer, length, offset, cb) => {
-    console.log(
+    console.info(
       "getxattr(%s, %s, %o, %d, %d)",
       path,
       name,

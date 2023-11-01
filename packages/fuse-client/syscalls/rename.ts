@@ -5,10 +5,9 @@ export const rename: (backend: SQLiteBackend) => MountOptions["rename"] = (
   backend
 ) => {
   return async (srcPath, destPath, cb) => {
-    console.log("rename(%s, %s)", srcPath, destPath);
+    console.info("rename(%s, %s)", srcPath, destPath);
     const r = await backend.renameFile(srcPath, destPath);
     if (r.status === "ok") {
-      console.log("rename(%s, %s)", srcPath, destPath);
       cb(0);
     } else {
       // TODO: can move fail, if yes, when?
