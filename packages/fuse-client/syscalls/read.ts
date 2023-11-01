@@ -6,7 +6,7 @@ export const read: (backend: SQLiteBackend) => MountOptions["read"] = (
   backend
 ) => {
   return async (path, fd, buf, len, pos, cb) => {
-    console.log("read(%s, %d, %d, %d)", path, fd, len, pos);
+    console.info("read(%s, %d, %d, %d)", path, fd, len, pos);
     const r = await backend.getFileChunks(fd, pos, len);
     await match(r)
       .with({ status: "ok" }, async (r) => {

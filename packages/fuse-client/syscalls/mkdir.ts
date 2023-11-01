@@ -5,7 +5,7 @@ export const mkdir: (backend: SQLiteBackend) => MountOptions["mkdir"] = (
   backend
 ) => {
   return async (filepath, mode, cb) => {
-    console.log("mkdir(%s, %s)", filepath, mode);
+    console.info("mkdir(%s, %s)", filepath, mode);
     const filename = path.parse(filepath).base;
 
     if (filename.length > 255) {

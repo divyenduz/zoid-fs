@@ -5,7 +5,7 @@ export const create: (backend: SQLiteBackend) => MountOptions["create"] = (
   backend
 ) => {
   return async (path, mode, cb) => {
-    console.log("create(%s, %d)", path, mode);
+    console.info("create(%s, %d)", path, mode);
 
     //@ts-expect-error fix types
     const context = fuse.context();

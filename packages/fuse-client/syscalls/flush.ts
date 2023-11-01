@@ -5,7 +5,7 @@ export const flush: (backend: SQLiteBackend) => MountOptions["flush"] = (
   backend
 ) => {
   return async (path, fd, cb) => {
-    console.log("flush(%s, %d)", path, fd);
+    console.info("flush(%s, %d)", path, fd);
     await backend.flush(path);
     cb(0);
   };

@@ -6,7 +6,7 @@ export const fsync: (backend: SQLiteBackend) => MountOptions["fsync"] = (
   backend
 ) => {
   return async (path, fd, datasync, cb) => {
-    console.log("fsync(%s, %d, %d)", path, fd, datasync);
+    console.info("fsync -> flush(%s, %d, %d)", path, fd, datasync);
     // @ts-expect-error TODO: implement fsync properly
     // We do buffered writes and flush flushes the buffer!
     // A program may not call flush but fsync without relenquishing fd (like SQLite)

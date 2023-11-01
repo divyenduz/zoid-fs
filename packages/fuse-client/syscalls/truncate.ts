@@ -6,7 +6,7 @@ export const truncate: (backend: SQLiteBackend) => MountOptions["truncate"] = (
   backend
 ) => {
   return async (path, size, cb) => {
-    console.log("truncate(%s, %d)", path, size);
+    console.info("truncate(%s, %d)", path, size);
     const r = await backend.truncateFile(path, size);
     await match(r)
       .with({ status: "ok" }, async (r) => {

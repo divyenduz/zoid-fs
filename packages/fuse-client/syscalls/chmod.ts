@@ -7,7 +7,7 @@ export const chmod: (backend: SQLiteBackend) => MountOptions["chmod"] = (
   backend
 ) => {
   return async (path, mode, cb) => {
-    console.log("chmod(%s, %d)", path, mode);
+    console.info("chmod(%s, %d)", path, mode);
     const r = await backend.updateMode(path, mode);
     match(r)
       .with({ status: "ok" }, () => {

@@ -5,7 +5,7 @@ export const readdir: (backend: SQLiteBackend) => MountOptions["readdir"] = (
   backend
 ) => {
   return async (path, cb) => {
-    console.log("readdir(%s)", path);
+    console.info("readdir(%s)", path);
 
     // TODO: figure out how are these directories in output of ls -la
     const dotDirs = [".", ".."];

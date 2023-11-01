@@ -5,7 +5,7 @@ export const chown: (backend: SQLiteBackend) => MountOptions["chown"] = (
   backend
 ) => {
   return async (path, uid, gid, cb) => {
-    console.log("chown(%s, %d, %d)", path, uid, gid);
+    console.info("chown(%s, %d, %d)", path, uid, gid);
     cb(0);
   };
 };

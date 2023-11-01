@@ -5,7 +5,7 @@ export const release: (backend: SQLiteBackend) => MountOptions["release"] = (
   backend
 ) => {
   return async (path, fd, cb) => {
-    console.log("release(%s, %d)", path, fd);
+    console.info("release(%s, %d)", path, fd);
     cb(0);
   };
 };
