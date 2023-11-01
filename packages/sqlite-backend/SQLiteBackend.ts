@@ -400,7 +400,7 @@ export class SQLiteBackend implements Backend {
           // Note: deleting file should delete link and content as cascade delete is enabled
           const fileDeleteMany = await tx.file.deleteMany({
             where: {
-              id: link.id,
+              id: link.fileId,
             },
           });
 
@@ -444,7 +444,7 @@ export class SQLiteBackend implements Backend {
         });
         const file = await tx.file.update({
           where: {
-            id: link.id,
+            id: link.fileId,
           },
           data: {
             mode,
