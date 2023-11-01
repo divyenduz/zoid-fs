@@ -6,7 +6,7 @@ export const init: (backend: SQLiteBackend) => MountOptions["init"] = (
   backend
 ) => {
   return async (cb) => {
-    console.log("init");
+    console.info("init");
 
     //@ts-expect-error fix types
     const context = fuse.context();

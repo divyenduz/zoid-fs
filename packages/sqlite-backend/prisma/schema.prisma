@@ -13,20 +13,27 @@ datasource db {
 }
 
 model File {
-  id       Int       @id @default(autoincrement())
-  type     String // dir or file or symlink
-  targetId Int       @default(0) // only relevant for symlink otherwise 0
-  mode     Int
-  name     String
-  dir      String
-  path     String    @unique
+  id      Int       @id @default(autoincrement())
+  mode    Int
   // fileType  String // text or binary
-  uid      Int
-  gid      Int
-  atime    DateTime
-  mtime    DateTime  @updatedAt
-  ctime    DateTime  @default(now())
-  Content  Content[]
+  uid     Int
+  gid     Int
+  atime   DateTime
+  mtime   DateTime  @updatedAt
+  ctime   DateTime  @default(now())
+  Content Content[]
+  Link    Link[]
+}
+
+model Link {
+  id         Int    @id @default(autoincrement())
+  name       String
+  type       String // dir or file or symlink
+  dir        String
+  path       String @unique
+  targetPath String @default("") // Only relevant for symlink, target path
+  file       File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId     Int
 }
 
 model Content {

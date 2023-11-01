@@ -1,12 +1,11 @@
-import { File } from "@prisma/client";
+import { File, Link } from "@prisma/client";
 
 type FileType = "file" | "dir" | "symlink";
 
-type Result<T> =
-  | {
+type Result<T, K extends string = "file"> =
+  | ({
       status: "ok";
-      file: T;
-    }
+    } & { [P in K]: T })
   | {
       status: "not_found";
     };
@@ -14,7 +13,9 @@ type Result<T> =
 // TODO: bump this based on the latest state of the actual backend!
 
 export interface Backend {
-  getFiles: (dir: string) => Promise<File[]>;
+  // TODO: use resule
+  getLinks: (dir: string) => Promise<Link[]>;
+  getLink: (dir: string) => Promise<Result<Link, "link">>;
   getFile: (filepath: string) => Promise<Result<File>>;
 
   createFile: (
@@ -23,16 +24,13 @@ export interface Backend {
     mode: number,
     uid: number,
     gid: number,
-    targetId: number
+    targetPath: string
   ) => Promise<Result<File>>;
 
-  writeFile: (
-    filepath: string,
-    uid: number,
-    gid: number
-  ) => Promise<Result<File>>;
-
-  deleteFile: (filepath: string) => Promise<Result<File>>;
-  renameFile: (srcPath: string, destPath: string) => Promise<Result<File>>;
+  deleteFile: (filepath: string) => Promise<Result<number, "count">>;
+  renameFile: (
+    srcPath: string,
+    destPath: string
+  ) => Promise<Result<Link, "link">>;
   updateMode: (filepath: string, mode: number) => Promise<Result<File>>;
 }

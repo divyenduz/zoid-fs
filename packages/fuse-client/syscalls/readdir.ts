@@ -10,8 +10,8 @@ export const readdir: (backend: SQLiteBackend) => MountOptions["readdir"] = (
     // TODO: figure out how are these directories in output of ls -la
     const dotDirs = [".", ".."];
 
-    const files = await backend.getFiles(path);
-    const fileNames = dotDirs.concat(files.map((file) => file.name));
+    const links = await backend.getLinks(path);
+    const fileNames = dotDirs.concat(links.map((link) => link.name));
 
     return cb(0, fileNames);
   };

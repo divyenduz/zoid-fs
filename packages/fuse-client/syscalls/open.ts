@@ -6,7 +6,7 @@ export const open: (backend: SQLiteBackend) => MountOptions["open"] = (
   backend
 ) => {
   return async (path, flags, cb) => {
-    console.log("open(%s, %d)", path, flags);
+    console.info("open(%s, %d)", path, flags);
     const r = await backend.getFile(path);
 
     match(r)

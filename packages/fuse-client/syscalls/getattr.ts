@@ -6,9 +6,8 @@ export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
   backend
 ) => {
   return async (path, cb) => {
-    console.log("getattr(%s)", path);
+    console.info("getattr(%s)", path);
     const r = await backend.getFile(path);
-
     await match(r)
       .with({ status: "ok" }, async (r) => {
         const rSize = await backend.getFileSize(path);
@@ -16,13 +15,15 @@ export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
           cb(fuse.ENOENT);
           return;
         }
-
+        const rNlinks = await backend.getFileNLinks(path);
         const { mtime, atime, ctime, mode } = r.file;
         cb(0, {
           mtime,
           atime,
           ctime,
-          nlink: 1,
+          blocks: 1,
+          ino: r.file.id,
+          nlink: rNlinks.nLinks?.length || 1,
           size: rSize.size,
           mode: mode,
           // TODO: enable posix mode where real uid/gid are returned
