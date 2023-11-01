@@ -7,15 +7,22 @@ export const readlink: (backend: SQLiteBackend) => MountOptions["readlink"] = (
 ) => {
   return async (path, cb) => {
     console.info("readlink(%s)", path);
-    const r = await backend.getFileRaw(path);
-    match(r)
-      .with({ status: "ok" }, (r) => {
-        cb(0, r.file.targetPath);
-      })
-      .with({ status: "not_found" }, () => {
-        //@ts-expect-error fix types, what to do if readlink fails?
-        cb(fuse.ENOENT);
-      })
-      .exhaustive();
+    try {
+      const r = await backend.getLink(path);
+      match(r)
+        .with({ status: "ok" }, (r) => {
+          cb(0, r.link.targetPath);
+        })
+        .with({ status: "not_found" }, () => {
+          //@ts-expect-error fix types, what to do if readlink fails?
+          cb(fuse.ENOENT);
+        })
+        .exhaustive();
+    } catch (e) {
+      console.error(e);
+      return {
+        status: "not_found" as const,
+      };
+    }
   };
 };

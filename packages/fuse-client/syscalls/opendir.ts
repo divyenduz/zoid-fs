@@ -13,7 +13,7 @@ export const opendir: (backend: SQLiteBackend) => MountOptions["opendir"] = (
       return;
     }
 
-    const r = await backend.getFileResolved(path);
+    const r = await backend.getFile(path);
     match(r)
       .with({ status: "ok" }, (r) => {
         cb(0, r.file.id);

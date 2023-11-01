@@ -10,21 +10,9 @@ export const link: (backend: SQLiteBackend) => MountOptions["link"] = (
 
     // TODO: throw if destination doesn't exist
 
-    //@ts-expect-error fix types
-    const context = fuse.context();
-    const { uid, gid } = context;
-
     // TODO: double check if mode for link is correct
     // https://unix.stackexchange.com/questions/193465/what-file-mode-is-a-link
-    const r = await backend.createFile(
-      destPath,
-      "link",
-      41453, // Link's mode??? from node-fuse-binding source, why though?
-      uid,
-      gid,
-      srcPath
-    );
-    console.log({ r });
+    const r = await backend.createLink(srcPath, destPath);
     match(r)
       .with({ status: "ok" }, () => {
         cb(0);

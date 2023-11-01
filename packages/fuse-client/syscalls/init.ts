@@ -12,7 +12,7 @@ export const init: (backend: SQLiteBackend) => MountOptions["init"] = (
     const context = fuse.context();
     const { uid, gid } = context;
 
-    const rootFolder = await backend.getFileResolved("/");
+    const rootFolder = await backend.getFile("/");
     match(rootFolder)
       .with({ status: "ok" }, () => {})
       .with({ status: "not_found" }, async () => {

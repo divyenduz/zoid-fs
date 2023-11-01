@@ -7,7 +7,7 @@ export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
 ) => {
   return async (path, cb) => {
     console.info("getattr(%s)", path);
-    const r = await backend.getFileResolved(path);
+    const r = await backend.getFile(path);
     await match(r)
       .with({ status: "ok" }, async (r) => {
         const rSize = await backend.getFileSize(path);
