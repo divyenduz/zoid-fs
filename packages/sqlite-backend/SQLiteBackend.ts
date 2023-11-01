@@ -12,7 +12,7 @@ export type ContentChunk = {
   size: number;
 };
 
-const WRITE_BUFFER_SIZE = 10;
+const WRITE_BUFFER_SIZE = 1000;
 
 export class SQLiteBackend implements Backend {
   private readonly writeBuffers: Map<string, WriteBuffer<ContentChunk>> =
@@ -60,39 +60,78 @@ export class SQLiteBackend implements Backend {
   async getFiles(dir: string) {
     const files = await this.prisma.file.findMany({
       where: {
-        dir,
+        AND: [
+          {
+            dir,
+          },
+          {
+            path: {
+              not: "/",
+            },
+          },
+        ],
       },
     });
     return files;
   }
 
-  async getFile(filepath: string) {
+  async getFileRaw(filepath: string) {
     try {
-      const fileOrSymlink = await this.prisma.file.findFirstOrThrow({
+      const file = await this.prisma.file.findFirstOrThrow({
         where: {
           path: filepath,
         },
       });
-
-      const file = await match(fileOrSymlink.type === "symlink")
-        .with(true, async () => {
-          const targetFile = await this.prisma.file.findFirstOrThrow({
-            where: {
-              id: fileOrSymlink.targetId,
-            },
-          });
-          return {
-            ...targetFile,
-            mode: constants.S_IFLNK,
-          };
-        })
-        .otherwise(() => fileOrSymlink);
 
       return {
         status: "ok" as const,
         file: file,
       };
     } catch (e) {
+      console.error(e);
+      return {
+        status: "not_found" as const,
+      };
+    }
+  }
+
+  async getFileResolved(filepath: string) {
+    try {
+      const fileOrSymlink = await this.getFileRaw(filepath);
+      if (fileOrSymlink.status === "not_found") {
+        return {
+          status: "not_found" as const,
+        };
+      }
+
+      const file = await match(fileOrSymlink.file.type)
+        .with("symlink", async () => {
+          const targetFile = await this.getFileRaw(
+            fileOrSymlink.file.targetPath
+          );
+          return {
+            // TODO: error handling
+            ...targetFile.file!,
+            mode: constants.S_IFLNK,
+          };
+        })
+        .with("link", async () => {
+          const targetFile = await this.getFileRaw(
+            fileOrSymlink.file.targetPath
+          );
+          return {
+            // TODO: error handling
+            ...targetFile.file!,
+          };
+        })
+        .otherwise(() => fileOrSymlink.file);
+
+      return {
+        status: "ok" as const,
+        file: file,
+      };
+    } catch (e) {
+      console.error(e);
       return {
         status: "not_found" as const,
       };
@@ -127,6 +166,7 @@ export class SQLiteBackend implements Backend {
         chunks,
       };
     } catch (e) {
+      console.error(e);
       return {
         status: "not_found" as const,
       };
@@ -135,10 +175,12 @@ export class SQLiteBackend implements Backend {
 
   async getFileSize(filepath: string) {
     try {
+      const file = await this.getFileResolved(filepath);
+      // TODO: error handling
       const chunks = await this.prisma.content.findMany({
         where: {
           file: {
-            path: filepath,
+            path: file.file?.path,
           },
         },
       });
@@ -148,6 +190,36 @@ export class SQLiteBackend implements Backend {
         size: Buffer.byteLength(bufChunk),
       };
     } catch (e) {
+      console.error(e);
+      return {
+        status: "not_found" as const,
+      };
+    }
+  }
+
+  async getFileNLinks(filepath: string) {
+    try {
+      const file = await this.getFileResolved(filepath);
+
+      // TODO: error handling
+      const nLinks = await this.prisma.file.findMany({
+        where: {
+          OR: [
+            {
+              path: file.file?.path,
+            },
+            {
+              targetPath: file.file?.path,
+            },
+          ],
+        },
+      });
+      return {
+        status: "ok" as const,
+        nLinks,
+      };
+    } catch (e) {
+      console.error(e);
       return {
         status: "not_found" as const,
       };
@@ -160,7 +232,7 @@ export class SQLiteBackend implements Backend {
     mode = 16877, // dir (for default to be file, use 33188)
     uid: number,
     gid: number,
-    targetId: number = 0
+    targetPath: string = ""
   ) {
     try {
       const parsedPath = path.parse(filepath);
@@ -176,7 +248,7 @@ export class SQLiteBackend implements Backend {
           ctime: new Date(),
           uid,
           gid,
-          targetId,
+          targetPath,
         },
       });
       return {
@@ -184,6 +256,7 @@ export class SQLiteBackend implements Backend {
         file: file,
       };
     } catch (e) {
+      console.error(e);
       return {
         status: "not_found" as const,
       };
@@ -216,6 +289,7 @@ export class SQLiteBackend implements Backend {
         file: file,
       };
     } catch (e) {
+      console.error(e);
       return {
         status: "not_found" as const,
       };
@@ -231,7 +305,7 @@ export class SQLiteBackend implements Backend {
     }
 
     try {
-      const rFile = await this.getFile(filepath);
+      const rFile = await this.getFileResolved(filepath);
       const file = rFile.file;
 
       /**
@@ -270,6 +344,7 @@ export class SQLiteBackend implements Backend {
         chunks,
       };
     } catch (e) {
+      console.error(e);
       return {
         status: "not_found" as const,
       };
@@ -293,6 +368,7 @@ export class SQLiteBackend implements Backend {
         file: file,
       };
     } catch (e) {
+      console.error(e);
       return {
         status: "not_found" as const,
       };
@@ -301,17 +377,23 @@ export class SQLiteBackend implements Backend {
 
   async deleteFile(filepath: string) {
     try {
-      const file = await this.prisma.file.delete({
+      const file = await this.prisma.file.deleteMany({
         where: {
-          path: filepath,
+          OR: [
+            {
+              path: filepath,
+            },
+            { AND: [{ type: "link", targetPath: filepath }] },
+          ],
         },
       });
 
       return {
         status: "ok" as const,
-        file: file,
+        file: file.count,
       };
     } catch (e) {
+      console.error(e);
       return {
         status: "not_found" as const,
       };
@@ -370,6 +452,7 @@ export class SQLiteBackend implements Backend {
         file: file,
       };
     } catch (e) {
+      console.error(e);
       return {
         status: "not_found" as const,
       };
@@ -392,6 +475,7 @@ export class SQLiteBackend implements Backend {
         file: file,
       };
     } catch (e) {
+      console.error(e);
       return {
         status: "not_found" as const,
       };

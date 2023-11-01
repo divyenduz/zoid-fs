@@ -6,11 +6,11 @@ export const readlink: (backend: SQLiteBackend) => MountOptions["readlink"] = (
   backend
 ) => {
   return async (path, cb) => {
-    console.log("readlink(%s)", path);
-    const r = await backend.getFile(path);
+    console.info("readlink(%s)", path);
+    const r = await backend.getFileRaw(path);
     match(r)
       .with({ status: "ok" }, (r) => {
-        cb(0, r.file.name);
+        cb(0, r.file.targetPath);
       })
       .with({ status: "not_found" }, () => {
         //@ts-expect-error fix types, what to do if readlink fails?

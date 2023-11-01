@@ -15,7 +15,8 @@ type Result<T> =
 
 export interface Backend {
   getFiles: (dir: string) => Promise<File[]>;
-  getFile: (filepath: string) => Promise<Result<File>>;
+  getFileRaw: (filepath: string) => Promise<Result<File>>;
+  getFileResolved: (filepath: string) => Promise<Result<File>>;
 
   createFile: (
     filepath: string,
@@ -23,7 +24,7 @@ export interface Backend {
     mode: number,
     uid: number,
     gid: number,
-    targetId: number
+    targetPath: string
   ) => Promise<Result<File>>;
 
   writeFile: (
@@ -32,7 +33,7 @@ export interface Backend {
     gid: number
   ) => Promise<Result<File>>;
 
-  deleteFile: (filepath: string) => Promise<Result<File>>;
+  deleteFile: (filepath: string) => Promise<Result<number>>;
   renameFile: (srcPath: string, destPath: string) => Promise<Result<File>>;
   updateMode: (filepath: string, mode: number) => Promise<Result<File>>;
 }

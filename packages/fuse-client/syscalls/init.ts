@@ -6,13 +6,13 @@ export const init: (backend: SQLiteBackend) => MountOptions["init"] = (
   backend
 ) => {
   return async (cb) => {
-    console.log("init");
+    console.info("init");
 
     //@ts-expect-error fix types
     const context = fuse.context();
     const { uid, gid } = context;
 
-    const rootFolder = await backend.getFile("/");
+    const rootFolder = await backend.getFileResolved("/");
     match(rootFolder)
       .with({ status: "ok" }, () => {})
       .with({ status: "not_found" }, async () => {

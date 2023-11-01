@@ -6,14 +6,7 @@ export const symlink: (backend: SQLiteBackend) => MountOptions["symlink"] = (
   backend
 ) => {
   return async (srcPath, destPath, cb) => {
-    console.log("symlink(%s, %s)", srcPath, destPath);
-
-    const targetFile = await backend.getFile(srcPath);
-    console.log({ targetFile });
-    if (targetFile.status === "not_found") {
-      cb(fuse.ENOENT);
-      return;
-    }
+    console.info("symlink(%s, %s)", srcPath, destPath);
 
     //@ts-expect-error fix types
     const context = fuse.context();
@@ -27,7 +20,7 @@ export const symlink: (backend: SQLiteBackend) => MountOptions["symlink"] = (
       33188,
       uid,
       gid,
-      targetFile.file.id
+      srcPath
     );
     match(r)
       .with({ status: "ok" }, () => {
