@@ -414,6 +414,7 @@ export class SQLiteBackend implements Backend {
   }
 
   async deleteFile(filepath: string) {
+    const links = await this.prisma.link.findMany();
     try {
       const { link } = await this.prisma.$transaction(async (tx) => {
         const link = await this.prisma.link.findFirstOrThrow({

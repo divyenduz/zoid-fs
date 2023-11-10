@@ -6,6 +6,13 @@ export const rename: (backend: SQLiteBackend) => MountOptions["rename"] = (
 ) => {
   return async (srcPath, destPath, cb) => {
     console.info("rename(%s, %s)", srcPath, destPath);
+
+    if (backend.isVirtualFile(srcPath)) {
+      await backend.createFile(destPath, "file", 33188, 0, 0);
+      cb(0);
+      return;
+    }
+
     const r = await backend.renameFile(srcPath, destPath);
     if (r.status === "ok") {
       cb(0);
