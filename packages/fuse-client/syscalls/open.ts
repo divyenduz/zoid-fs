@@ -24,7 +24,7 @@ export const open: (backend: SQLiteBackend) => MountOptions["open"] = (
         const context = fuse.context();
         const { uid, gid } = context;
 
-        const newFile = await backend.createFile(path, "file", 0o777, uid, gid);
+        const newFile = await backend.createFile(path, "file", 33188, uid, gid);
         match(newFile)
           .with({ status: "ok" }, (newFile) => {
             cb(0, newFile.file.id);

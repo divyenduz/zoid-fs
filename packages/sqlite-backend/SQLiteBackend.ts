@@ -2,9 +2,10 @@ import { Content, PrismaClient } from "@prisma/client";
 import { Backend } from "@zoid-fs/common";
 import { match } from "ts-pattern";
 import path from "path";
-import { constants } from "fs";
 import { rawCreateMany } from "./prismaRawUtil";
 import { WriteBuffer } from "./WriteBuffer";
+import mmmagic, { Magic } from "mmmagic";
+import { promisify } from "util";
 
 export type ContentChunk = {
   content: Buffer;
@@ -49,6 +50,23 @@ export class SQLiteBackend implements Backend {
         return this.writeBuffers.get(filepath);
       })
       .exhaustive();
+
+    // TODO: move to event based system
+    if (chunk.offset === 0) {
+      const magic = new Magic(mmmagic.MAGIC_MIME_TYPE);
+      const magicAsync = promisify(magic.detect.bind(magic));
+      const fileType = (await magicAsync(chunk.content)) as string;
+      const link = await this.prisma.link.findUnique({
+        where: {
+          path: filepath,
+        },
+      });
+      const r = await this.prisma.$executeRaw`
+        INSERT OR REPLACE INTO MetaData (fileId, status, fileType)
+        VALUES (${link?.fileId}, "PENDING", ${fileType})
+      `;
+    }
+
     await writeBuffer!.write(chunk);
   }
 
@@ -319,6 +337,13 @@ export class SQLiteBackend implements Backend {
         })
       );
 
+      // TODO: probably do this in an event system!
+      await this.prisma.$executeRaw`
+        UPDATE MetaData
+        SET status = "PENDING"
+        WHERE fileId = ${file?.id}
+      `;
+
       return {
         status: "ok" as const,
         chunks,
@@ -360,20 +385,33 @@ export class SQLiteBackend implements Backend {
 
   async deleteFile(filepath: string) {
     try {
-      const link = await this.prisma.link.findFirstOrThrow({
-        where: {
-          path: filepath,
-        },
-      });
-      const file = await this.prisma.file.deleteMany({
-        where: {
-          id: link.fileId,
-        },
+      const { link } = await this.prisma.$transaction(async (tx) => {
+        const link = await this.prisma.link.findFirstOrThrow({
+          where: {
+            path: filepath,
+          },
+        });
+        await this.prisma.link.deleteMany({
+          where: {
+            id: link.id,
+          },
+        });
+        const file = await this.prisma.file.deleteMany({
+          where: {
+            id: link.fileId,
+          },
+        });
+        const content = await this.prisma.content.deleteMany({
+          where: {
+            fileId: link.fileId,
+          },
+        });
+        return { link };
       });
 
       return {
         status: "ok" as const,
-        count: file.count,
+        count: 1,
       };
     } catch (e) {
       console.error(e);
@@ -390,19 +428,23 @@ export class SQLiteBackend implements Backend {
 
       const { updatedLink: link } = await this.prisma.$transaction(
         async (tx) => {
-          // Note: Delete if the destiantion path already exists
-          const link = await tx.link.findFirstOrThrow({
-            where: {
-              path: destPath,
-            },
-          });
+          try {
+            // Note: Delete if the destiantion path already exists
+            const link = await tx.link.findFirstOrThrow({
+              where: {
+                path: destPath,
+              },
+            });
 
-          // Note: deleting file should delete link and content as cascade delete is enabled
-          const fileDeleteMany = await tx.file.deleteMany({
-            where: {
-              id: link.fileId,
-            },
-          });
+            // Note: deleting file should delete link and content as cascade delete is enabled
+            const fileDeleteMany = await tx.file.deleteMany({
+              where: {
+                id: link.fileId,
+              },
+            });
+          } catch (e) {
+            // TODO: we should now consume errors without print / rethrowing them
+          }
 
           const updatedLink = await tx.link.update({
             where: {

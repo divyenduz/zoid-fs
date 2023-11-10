@@ -11,6 +11,7 @@
   "private": true,
   "devDependencies": {
     "@nx/js": "16.8.1",
+    "@types/mmmagic": "0.4.33",
     "nx": "16.8.1",
     "nx-cloud": "latest",
     "prisma": "5.4.2",
@@ -19,6 +20,7 @@
   "dependencies": {
     "@prisma/client": "5.4.2",
     "@zoid-fs/common": "*",
+    "mmmagic": "0.5.3",
     "sql-template-tag": "5.1.0",
     "ts-pattern": "5.0.5"
   }
