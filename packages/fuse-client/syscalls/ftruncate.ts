@@ -8,7 +8,6 @@ export const ftruncate: (
   return async (path, fd, size, cb) => {
     console.info("ftruncate -> truncate(%s, %d, %d)", path, fd, size);
     //@ts-expect-error fix types
-    // TODO: implement ftruncate properly
     truncate(backend)(path, size, cb);
   };
 };

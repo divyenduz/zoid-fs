@@ -13,7 +13,6 @@ type Result<T, K extends string = "file"> =
 // TODO: bump this based on the latest state of the actual backend!
 
 export interface Backend {
-  // TODO: use resule
   getLinks: (dir: string) => Promise<Link[]>;
   getLink: (dir: string) => Promise<Result<Link, "link">>;
   getFile: (filepath: string) => Promise<Result<File>>;

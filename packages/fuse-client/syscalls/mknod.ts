@@ -8,7 +8,6 @@ export const mknod: (backend: SQLiteBackend) => MountOptions["mknod"] = (
   return async (path, mode, dev, cb) => {
     console.info("mknod -> create(%s, %d, %d)", path, mode, dev);
     //@ts-expect-error fix types
-    // TODO: implement mknod properly
     create(backend)(path, mode, cb);
   };
 };
