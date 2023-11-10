@@ -1,0 +1,15 @@
+{
+  "name": "@zoid-fs/llm-document-reader",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "lint": "echo 'TODO: implement python lint'"
+  },
+  "private": true,
+  "devDependencies": {
+    "prisma": "5.4.2",
+    "vite-node": "0.34.5"
+  },
+  "dependencies": {}
+}
