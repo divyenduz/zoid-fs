@@ -14,15 +14,15 @@ export class VirtualFile {
     return this._fileId;
   }
 
-  getBuffer() {
+  get buffer() {
     return Buffer.from(this._content);
   }
 
-  getSize() {
-    return Buffer.byteLength(this.getBuffer());
+  get size() {
+    return Buffer.byteLength(this.buffer);
   }
 
-  getAttr() {
+  get attr() {
     return {
       mtime: this._date,
       atime: this._date,
@@ -30,7 +30,7 @@ export class VirtualFile {
       blocks: 1,
       ino: this.fileId,
       nlink: 1,
-      size: this.getSize(),
+      size: this.size,
       mode: 33188,
       uid: process.getuid ? process.getuid() : 0,
       gid: process.getgid ? process.getgid() : 0,

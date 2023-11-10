@@ -10,7 +10,7 @@ export const read: (backend: SQLiteBackend) => MountOptions["read"] = (
 
     if (backend.isVirtualFile(path)) {
       const virtualFile = backend.getVirtualFile(path);
-      const bufChunk = virtualFile.getBuffer();
+      const bufChunk = virtualFile.buffer;
       buf.write(bufChunk.toString("binary"), "binary");
       cb(Buffer.byteLength(bufChunk));
       return;

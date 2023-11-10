@@ -10,7 +10,7 @@ export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
 
     if (backend.isVirtualFile(path)) {
       const virtualFile = backend.getVirtualFile(path);
-      cb(0, virtualFile.getAttr());
+      cb(0, virtualFile.attr);
       return;
     }
 
