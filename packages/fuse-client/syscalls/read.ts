@@ -7,6 +7,15 @@ export const read: (backend: SQLiteBackend) => MountOptions["read"] = (
 ) => {
   return async (path, fd, buf, len, pos, cb) => {
     console.info("read(%s, %d, %d, %d)", path, fd, len, pos);
+
+    if (backend.isVirtualFile(path)) {
+      const virtualFile = backend.getVirtualFile(path);
+      const bufChunk = virtualFile.getBuffer();
+      buf.write(bufChunk.toString("binary"), "binary");
+      cb(Buffer.byteLength(bufChunk));
+      return;
+    }
+
     const r = await backend.getFileChunks(fd, pos, len);
     await match(r)
       .with({ status: "ok" }, async (r) => {

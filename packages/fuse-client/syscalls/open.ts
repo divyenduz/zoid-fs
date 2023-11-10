@@ -7,8 +7,14 @@ export const open: (backend: SQLiteBackend) => MountOptions["open"] = (
 ) => {
   return async (path, flags, cb) => {
     console.info("open(%s, %d)", path, flags);
-    const r = await backend.getFile(path);
 
+    if (backend.isVirtualFile(path)) {
+      const virtualFile = backend.getVirtualFile(path);
+      cb(0, virtualFile.fileId);
+      return;
+    }
+
+    const r = await backend.getFile(path);
     match(r)
       .with({ status: "ok" }, (r) => {
         cb(0, r.file.id);

@@ -6,6 +6,8 @@ import { rawCreateMany } from "./prismaRawUtil";
 import { WriteBuffer } from "./WriteBuffer";
 import mmmagic, { Magic } from "mmmagic";
 import { promisify } from "util";
+import { VirtualFiles } from "./VirtualFiles";
+import { VirtualFile } from "./VirtualFile";
 
 export type ContentChunk = {
   content: Buffer;
@@ -19,6 +21,7 @@ export class SQLiteBackend implements Backend {
   private readonly writeBuffers: Map<string, WriteBuffer<ContentChunk>> =
     new Map();
   private readonly prisma: PrismaClient;
+  private readonly virtualFiles: VirtualFiles;
   constructor(prismaOrDbUrl?: PrismaClient | string) {
     if (prismaOrDbUrl instanceof PrismaClient) {
       this.prisma = prismaOrDbUrl;
@@ -35,6 +38,33 @@ export class SQLiteBackend implements Backend {
 
       this.prisma.$connect();
     }
+
+    const virtualFile = new VirtualFile(
+      999,
+      "/.zoid-meta",
+      JSON.stringify(
+        {
+          databaseUrl: process.env.DATABASE_URL,
+        },
+        null,
+        2
+      ) + "\n"
+    );
+    const virtualFileMap = new Map();
+    virtualFileMap.set(virtualFile.path, virtualFile);
+    this.virtualFiles = new VirtualFiles(virtualFileMap);
+  }
+
+  isVirtualFile(filepath: string) {
+    return this.virtualFiles.isVirtualFile(filepath);
+  }
+
+  getVirtualFile(filepath: string) {
+    return this.virtualFiles.getVirtualFile(filepath)!;
+  }
+
+  getVirtualFilePaths(filepath: string) {
+    return this.virtualFiles.filePaths(filepath);
   }
 
   async write(filepath: string, chunk: ContentChunk) {
