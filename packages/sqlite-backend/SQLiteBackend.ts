@@ -538,4 +538,8 @@ export class SQLiteBackend implements Backend {
       };
     }
   }
+
+  async close() {
+    await this.prisma.$disconnect();
+  }
 }
