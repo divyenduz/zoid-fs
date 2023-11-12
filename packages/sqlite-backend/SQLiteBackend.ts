@@ -207,15 +207,17 @@ export class SQLiteBackend implements Backend {
     try {
       const file = await this.getFile(filepath);
       // TODO: error handling
-      const chunks = await this.prisma.content.findMany({
+      const lastChunk = await this.prisma.content.aggregate({
         where: {
           fileId: file.file?.id,
         },
+        _max: {
+          offset: true,
+        },
       });
-      const bufChunk = Buffer.concat(chunks.map((chunk) => chunk.content));
       return {
         status: "ok" as const,
-        size: Buffer.byteLength(bufChunk),
+        size: lastChunk._max.offset || 0,
       };
     } catch (e) {
       console.error(e);
