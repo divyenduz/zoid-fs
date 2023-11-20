@@ -15,7 +15,7 @@ export type ContentChunk = {
   size: number;
 };
 
-const WRITE_BUFFER_SIZE = 1000;
+const WRITE_BUFFER_SIZE = 10000;
 
 export class SQLiteBackend implements Backend {
   private readonly writeBuffers: Map<string, WriteBuffer<ContentChunk>> =
@@ -206,18 +206,27 @@ export class SQLiteBackend implements Backend {
   async getFileSize(filepath: string) {
     try {
       const file = await this.getFile(filepath);
+
       // TODO: error handling
-      const lastChunk = await this.prisma.content.aggregate({
+      const lastChunkR = await this.prisma.content.findMany({
         where: {
           fileId: file.file?.id,
         },
-        _max: {
-          offset: true,
+        orderBy: {
+          offset: "desc",
         },
+        take: 1,
       });
+      if (lastChunkR.length === 0) {
+        return {
+          status: "ok" as const,
+          size: 0,
+        };
+      }
+      const { offset, size } = lastChunkR[0];
       return {
         status: "ok" as const,
-        size: lastChunk._max.offset || 0,
+        size: offset + size,
       };
     } catch (e) {
       console.error(e);
@@ -344,15 +353,11 @@ export class SQLiteBackend implements Backend {
        * TODO: this should happen in a transaction
        */
 
-      for await (const chunk of chunks) {
-        await this.prisma.content.deleteMany({
-          where: {
-            offset: chunk.offset,
-            size: chunk.size,
-            fileId: file?.id,
-          },
-        });
-      }
+      const firstChunk = chunks[0];
+      const lastChunk = chunks[chunks.length - 1];
+      await this.prisma.$executeRaw`DELETE FROM content WHERE offset >= ${
+        firstChunk.offset
+      } AND offset <= ${lastChunk.offset + 1} AND fileId = ${file?.id}`;
 
       await rawCreateMany<Omit<Content, "id">>(
         this.prisma,
@@ -416,9 +421,8 @@ export class SQLiteBackend implements Backend {
   }
 
   async deleteFile(filepath: string) {
-    const links = await this.prisma.link.findMany();
     try {
-      const { link } = await this.prisma.$transaction(async (tx) => {
+      await this.prisma.$transaction(async (tx) => {
         const link = await this.prisma.link.findFirstOrThrow({
           where: {
             path: filepath,
