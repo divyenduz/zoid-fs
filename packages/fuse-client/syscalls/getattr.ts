@@ -7,6 +7,13 @@ export const getattr: (backend: SQLiteBackend) => MountOptions["getattr"] = (
 ) => {
   return async (path, cb) => {
     console.info("getattr(%s)", path);
+
+    if (backend.isVirtualFile(path)) {
+      const virtualFile = backend.getVirtualFile(path);
+      cb(0, virtualFile.attr);
+      return;
+    }
+
     const r = await backend.getFile(path);
     await match(r)
       .with({ status: "ok" }, async (r) => {

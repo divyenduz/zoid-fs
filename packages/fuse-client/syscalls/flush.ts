@@ -6,6 +6,10 @@ export const flush: (backend: SQLiteBackend) => MountOptions["flush"] = (
 ) => {
   return async (path, fd, cb) => {
     console.info("flush(%s, %d)", path, fd);
+    if (backend.isVirtualFile(path)) {
+      cb(0);
+      return;
+    }
     await backend.flush(path);
     cb(0);
   };

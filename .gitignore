@@ -15,9 +15,12 @@ tmp
 
 # dependencies
 node_modules
-.env 
+.env
+.envrc
 
 # IDEs and editors
+.direnv/
+.vscode/
 /.idea
 .project
 .classpath

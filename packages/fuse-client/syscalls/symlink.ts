@@ -27,8 +27,6 @@ export const symlink: (backend: SQLiteBackend) => MountOptions["symlink"] = (
     const context = fuse.context();
     const { uid, gid } = context;
 
-    // TODO: double check if mode for symlink is correct
-    // https://unix.stackexchange.com/questions/193465/what-file-mode-is-a-symlink
     const r = await backend.createFile(
       destPath,
       "symlink",

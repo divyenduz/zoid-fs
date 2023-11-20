@@ -7,8 +7,14 @@ export const open: (backend: SQLiteBackend) => MountOptions["open"] = (
 ) => {
   return async (path, flags, cb) => {
     console.info("open(%s, %d)", path, flags);
-    const r = await backend.getFile(path);
 
+    if (backend.isVirtualFile(path)) {
+      const virtualFile = backend.getVirtualFile(path);
+      cb(0, virtualFile.fileId);
+      return;
+    }
+
+    const r = await backend.getFile(path);
     match(r)
       .with({ status: "ok" }, (r) => {
         cb(0, r.file.id);
@@ -24,7 +30,7 @@ export const open: (backend: SQLiteBackend) => MountOptions["open"] = (
         const context = fuse.context();
         const { uid, gid } = context;
 
-        const newFile = await backend.createFile(path, "file", 0o777, uid, gid);
+        const newFile = await backend.createFile(path, "file", 33188, uid, gid);
         match(newFile)
           .with({ status: "ok" }, (newFile) => {
             cb(0, newFile.file.id);

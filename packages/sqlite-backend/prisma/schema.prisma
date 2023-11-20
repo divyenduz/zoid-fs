@@ -3,7 +3,10 @@
 
 // With NixOS https://github.com/prisma/prisma/issues/3026
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
+
+  // Note: required only for Turso backend, split into a file once natively supported
+  // https://github.com/prisma/prisma/issues/2377#issuecomment-821203725
   previewFeatures = ["driverAdapters"]
 }
 
@@ -13,16 +16,17 @@ datasource db {
 }
 
 model File {
-  id      Int       @id @default(autoincrement())
-  mode    Int
+  id       Int       @id @default(autoincrement())
+  mode     Int
   // fileType  String // text or binary
-  uid     Int
-  gid     Int
-  atime   DateTime
-  mtime   DateTime  @updatedAt
-  ctime   DateTime  @default(now())
-  Content Content[]
-  Link    Link[]
+  uid      Int
+  gid      Int
+  atime    DateTime
+  mtime    DateTime  @updatedAt
+  ctime    DateTime  @default(now())
+  Content  Content[]
+  Link     Link[]
+  MetaData MetaData?
 }
 
 model Link {
@@ -43,4 +47,18 @@ model Content {
   size    Int
   file    File  @relation(fields: [fileId], references: [id], onDelete: Cascade)
   fileId  Int
+}
+
+// Provided by LLM/OpenAI API, eventually to be split into its own schema
+// https://github.com/prisma/prisma/issues/2377#issuecomment-821203725
+model MetaData {
+  id          Int       @id @default(autoincrement())
+  status      String    @default("PENDING") // PENDING, IN_PROGRESS, DONE
+  fileType    String    @default("UNKNOWN") // UNKNOWN, PDF, PNG and other mime types
+  title       String?
+  translation String?
+  date        DateTime?
+  embeddings  Bytes?
+  fileId      Int       @unique
+  file        File      @relation(fields: [fileId], references: [id], onDelete: Cascade)
 }

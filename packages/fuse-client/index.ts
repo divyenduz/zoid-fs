@@ -1,5 +1,4 @@
 import { SQLiteBackend } from "@zoid-fs/sqlite-backend";
-// TODO: inline source as a package https://github.com/direktspeed/node-fuse-bindings
 import fuse from "@zoid-fs/node-fuse-bindings";
 import { rename } from "./syscalls/rename";
 import { unlink } from "./syscalls/unlink";
@@ -83,14 +82,14 @@ export class FuseClient {
         fsync: fsync(this.backend),
         fsyncdir: fsyncdir(this.backend),
         flush: flush(this.backend),
-        // lock: lock(this.backend), // TODO: implement in bindings
-        // bmap: bmap(this.backend), // TODO: implement in bindings
+        // lock: lock(this.backend), // Note: not implemented in bindings
+        // bmap: bmap(this.backend), // Note: not implemented in bindings
         setxattr: setxattr(this.backend),
         getxattr: getxattr(this.backend),
         listxattr: listxattr(this.backend),
         removexattr: removexattr(this.backend),
-        // ioctl: ioctl(this.backend), // TODO: implement in bindings
-        // poll: poll(this.backend), // TODO: implement in bindings
+        // ioctl: ioctl(this.backend), // Note: not implemented in bindings
+        // poll: poll(this.backend), // Note: not implemented in bindings
       },
       (err) => {
         if (err) {

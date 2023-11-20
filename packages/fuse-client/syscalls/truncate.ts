@@ -7,6 +7,12 @@ export const truncate: (backend: SQLiteBackend) => MountOptions["truncate"] = (
 ) => {
   return async (path, size, cb) => {
     console.info("truncate(%s, %d)", path, size);
+
+    if (backend.isVirtualFile(path)) {
+      cb(0);
+      return;
+    }
+
     const r = await backend.truncateFile(path, size);
     await match(r)
       .with({ status: "ok" }, async (r) => {

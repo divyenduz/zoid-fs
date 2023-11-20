@@ -8,7 +8,6 @@ export const fgetattr: (backend: SQLiteBackend) => MountOptions["fgetattr"] = (
   return async (path, fd, cb) => {
     console.info("fgetattr -> getattr(%s, %d)", path, fd);
     //@ts-expect-error fix types
-    // TODO: implement fgetattr properly
     getattr(backend)?.(path, cb);
   };
 };

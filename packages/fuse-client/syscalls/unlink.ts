@@ -6,6 +6,12 @@ export const unlink: (backend: SQLiteBackend) => MountOptions["unlink"] = (
 ) => {
   return async (path, cb) => {
     console.info("unlink(%s)", path);
+
+    if (backend.isVirtualFile(path)) {
+      cb(0);
+      return;
+    }
+
     const r = await backend.deleteFile(path);
     if (r.status === "ok") {
       cb(0);

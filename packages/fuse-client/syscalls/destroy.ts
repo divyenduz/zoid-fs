@@ -6,6 +6,7 @@ export const destroy: (backend: SQLiteBackend) => MountOptions["destroy"] = (
 ) => {
   return async (cb) => {
     console.info("destroy");
+    await backend.close();
     cb(0);
   };
 };
